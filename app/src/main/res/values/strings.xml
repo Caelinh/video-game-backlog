@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VideoGameBacklog</string>
+    <string name="update_game">Update Game</string>
+    <string name="add_game">Add Game</string>
 </resources>
