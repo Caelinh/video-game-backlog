@@ -1,8 +1,16 @@
 package com.wguproject.videogamebacklog.data
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "game-table")
 data class Game(
+    @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
+    @ColumnInfo(name="game-title")
     val title: String = "",
+    @ColumnInfo(name = "game-description")
     val description: String = ""
 )
 
