@@ -1,7 +1,10 @@
 package com.wguproject.videogamebacklog
 
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,11 +23,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.wguproject.videogamebacklog.data.Game
 import androidx.compose.material.Card
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
-import com.wguproject.videogamebacklog.data.DummyGame
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.runtime.currentCompositeKeyHash
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LogView(
     navController: NavController,
@@ -32,9 +48,11 @@ fun LogView(
 ) {
     val context = LocalContext.current
     Scaffold(
-        topBar = {AppBarView(title = "Video Game Backlog", {
-            Toast.makeText(context, "Button Clicked", Toast.LENGTH_LONG).show()
-        })},
+        topBar = {
+            AppBarView(title = "Video Game Backlog") {
+                Toast.makeText(context, "Button Clicked", Toast.LENGTH_LONG).show()
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.padding(all = 20.dp),
@@ -42,26 +60,59 @@ fun LogView(
                 containerColor = Color.Black,
                 onClick = {
                     Toast.makeText(context, "FAB Button Clicked", Toast.LENGTH_LONG).show()
-                    navController.navigate(Screen.AddScreen.route)
+                    navController.navigate(Screen.AddScreen.route + "/0L")
                 })
             {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
-}
+        }
     ) {
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(it)){
-            items(DummyGame.backLog){
-                game -> VideoGameItem(game = game) {
-            }
+        val gameList = viewModel.getAllGames.collectAsState(initial = listOf())
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            items(gameList.value, key = {game -> game.id  }) { game ->
+                val dismissState = rememberDismissState(
+                    confirmStateChange = {
+                        if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
+                            viewModel.deleteGame(game)
+                        }
+                        true
+                    }
+                )
+                SwipeToDismiss(
+                    state = dismissState,
+                    background ={
+                                val color by animateColorAsState(
+                                    if (dismissState.dismissDirection == DismissDirection.EndToStart) Color.Red else Color.Transparent
+                                , label = ""
+                                )
+                        val alignment = Alignment.CenterEnd
+                        Box(
+                            Modifier.fillMaxSize().background(color).padding(horizontal = 20.dp),
+                            contentAlignment = alignment
+                        ){
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Icon", tint = Color.White)
+                        }
+                    },
+                    directions = setOf(DismissDirection.EndToStart),
+                    dismissThresholds = {FractionalThreshold(0.25F)},
+                    dismissContent = {
+                        VideoGameItem(game = game) {
+
+                            val id = game.id
+                            navController.navigate(Screen.AddScreen.route + "/$id")
+                        }
+                    })
             }
         }
     }
 }
 
 @Composable
-fun VideoGameItem(game: Game, onClick: () -> Unit){
+fun VideoGameItem(game: Game, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

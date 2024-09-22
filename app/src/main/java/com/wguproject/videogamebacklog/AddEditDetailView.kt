@@ -8,13 +8,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,18 +32,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.wguproject.videogamebacklog.data.Game
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun AddEditDetailView(
     id: Long, viewModel: GameViewModel, navController: NavController
 ) {
-    Scaffold(topBar = {
-        AppBarView(
-            title = if (id != 0L) stringResource(id = R.string.update_game)
-            else stringResource( id = R.string.add_game)
-        ){ navController.navigateUp() }
-    }) {
+
+    val snackMessage = remember {
+        mutableStateOf("")
+    }
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+    if (id != 0L) {
+        val game = viewModel.getGameById(id).collectAsState(initial = Game(0L, "", ""))
+        viewModel.gameTitleState = game.value.title
+        viewModel.gameDescriptionState = game.value.description
+    } else {
+        viewModel.gameTitleState = ""
+        viewModel.gameDescriptionState = ""
+    }
+
+
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            AppBarView(
+                title = if (id != 0L) stringResource(id = R.string.update_game)
+                else stringResource(id = R.string.add_game)
+            ) { navController.navigateUp() }
+        },
+    ) {
         Column(
             modifier = Modifier
                 .padding(it)
@@ -58,9 +86,30 @@ fun AddEditDetailView(
             Spacer(Modifier.height(10.dp))
             Button(onClick = {
                 if (viewModel.gameTitleState.isNotEmpty() && viewModel.gameDescriptionState.isNotEmpty()) {
-                    //TODO Update game
+                    if (id != 0L) {
+                        viewModel.updateGame(
+                            Game(
+                                id = id,
+                                title = viewModel.gameTitleState.trim(),
+                                description = viewModel.gameDescriptionState.trim()
+                            )
+                        )
+                        snackMessage.value = "Game Updated"
+                    } else {
+                        viewModel.addGame(
+                            Game(
+                                title = viewModel.gameTitleState.trim(),
+                                description = viewModel.gameDescriptionState.trim()
+                            )
+                        )
+                        snackMessage.value = "Game saved"
+                    }
                 } else {
-                    // TODO Add Game
+                    snackMessage.value = "Enter fields to create a wish"
+                }
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(snackMessage.value)
+                    navController.navigateUp()
                 }
             }) {
                 Text(

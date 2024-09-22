@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class GameViewModel(
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository = Graph.gameRepository
 ):ViewModel() {
 
     var gameTitleState by mutableStateOf("")
