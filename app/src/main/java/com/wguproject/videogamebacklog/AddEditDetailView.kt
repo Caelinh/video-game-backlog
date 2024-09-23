@@ -1,5 +1,6 @@
 package com.wguproject.videogamebacklog
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.amplifyframework.api.graphql.model.ModelMutation
+import com.amplifyframework.core.Amplify
 import com.wguproject.videogamebacklog.data.Game
 import kotlinx.coroutines.launch
 
@@ -102,6 +105,16 @@ fun AddEditDetailView(
                                 description = viewModel.gameDescriptionState.trim()
                             )
                         )
+//                        val newGame = com.amplifyframework.datastore.generated.model.Game.builder()
+//                            .name(viewModel.gameTitleState.trim())
+//                            .description(viewModel.gameDescriptionState.trim())
+//                            .build()
+//                        Amplify.API.mutate(
+//                            ModelMutation.create(newGame),
+//                            { Log.i("My Amplify Backend", "Added Todo with id: ${it.data.id}") },
+//                            { Log.e("MyAmplify Backend", "Create failed", it) }
+//
+//                        )
                         snackMessage.value = "Game saved"
                     }
                 } else {

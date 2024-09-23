@@ -10,24 +10,31 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
 @Composable
-fun Navigation(viewModel: GameViewModel = viewModel(), navController: NavHostController = rememberNavController()) {
+fun Navigation(
+    viewModel: GameViewModel = viewModel(),
+    navController: NavHostController = rememberNavController()
+) {
     NavHost(
         navController = navController,
-        startDestination = Screen.HomeScreen.route
+        startDestination = Screen.LoginScreen.route
     ) {
-            composable(Screen.HomeScreen.route){
-                LogView(navController, viewModel)
-            }
+        composable(Screen.LoginScreen.route){
+            LoginView(navController = navController)
+        }
+
+        composable(Screen.HomeScreen.route) {
+            LogView(navController, viewModel)
+        }
         composable(Screen.AddScreen.route + "/{id}",
             arguments = listOf(
-                navArgument("id"){
+                navArgument("id") {
                     type = NavType.LongType
                     defaultValue = 0L
                     nullable = false
                 }
             )
-        ){
-            val id = if(it.arguments != null) it.arguments!!.getLong("id") else 0L
+        ) {
+            val id = if (it.arguments != null) it.arguments!!.getLong("id") else 0L
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
         }
 
