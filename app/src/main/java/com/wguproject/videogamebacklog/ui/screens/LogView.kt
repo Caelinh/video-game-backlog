@@ -1,4 +1,4 @@
-package com.wguproject.videogamebacklog
+package com.wguproject.videogamebacklog.ui.screens
 
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -35,9 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import com.wguproject.videogamebacklog.ui.screens.AppBarView
+import com.wguproject.videogamebacklog.GameViewModel
+import com.wguproject.videogamebacklog.Screen
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -68,6 +70,7 @@ fun LogView(
         }
     ) {
         val gameList = viewModel.getAllGames.collectAsState(initial = listOf())
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,7 +104,6 @@ fun LogView(
                     dismissThresholds = {FractionalThreshold(0.25F)},
                     dismissContent = {
                         VideoGameItem(game = game) {
-
                             val id = game.id
                             navController.navigate(Screen.AddScreen.route + "/$id")
                         }
