@@ -2,7 +2,6 @@ package com.wguproject.videogamebacklog.data
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -26,7 +25,5 @@ abstract class GameDao {
 
     @Query("Select * from `game-table` where id = :id")
     abstract fun getGamebyId(id:Long): Flow<Game>
-
-
 
 }

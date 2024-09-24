@@ -1,6 +1,5 @@
-package com.wguproject.videogamebacklog
+package com.wguproject.videogamebacklog.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,8 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.amplifyframework.api.graphql.model.ModelMutation
-import com.amplifyframework.core.Amplify
+import com.wguproject.videogamebacklog.ui.screens.AppBarView
+import com.wguproject.videogamebacklog.GameViewModel
+import com.wguproject.videogamebacklog.R
 import com.wguproject.videogamebacklog.data.Game
 import kotlinx.coroutines.launch
 

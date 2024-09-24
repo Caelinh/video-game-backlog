@@ -7,6 +7,7 @@ import com.amplifyframework.api.aws.AWSApiPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.configuration.AmplifyOutputs
+import com.amplifyframework.datastore.generated.model.BackLog
 
 class VideoGameBacklogApp: Application(){
     override fun onCreate() {
@@ -20,5 +21,6 @@ class VideoGameBacklogApp: Application(){
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
         }
         Graph.provide(this)
+
     }
 }

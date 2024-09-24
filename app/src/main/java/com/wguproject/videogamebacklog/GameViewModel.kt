@@ -6,8 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.graphql.model.ModelMutation
+import com.amplifyframework.api.graphql.model.ModelQuery
 import com.amplifyframework.core.Amplify
+import com.amplifyframework.datastore.generated.model.BackLog
 import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.data.GameRepository
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +20,8 @@ import kotlinx.coroutines.launch
 class GameViewModel(
     private val gameRepository: GameRepository = Graph.gameRepository
 ) : ViewModel() {
+
+
 
     var gameTitleState by mutableStateOf("")
     var gameDescriptionState by mutableStateOf("")
@@ -33,35 +38,16 @@ class GameViewModel(
 
     init {
         viewModelScope.launch {
-            getAllGames = gameRepository.getAllGames()
+          getAllGames = gameRepository.getAllGames()
+
         }
     }
 
     fun addGame(game: Game) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            gameRepository.addGame(game = game)
-//
-//        }
         viewModelScope.launch(Dispatchers.IO) {
-            Amplify.Auth.getCurrentUser(
-                {
-                    val userId = it.userId
-                },
-                {
-                    Log.e("MyAmplifyApp","Error saving user $it")
-                }
-            )
-            val newGame = com.amplifyframework.datastore.generated.model.Game.builder()
-                .name(game.title)
-                .description(game.description)
-                .build()
-            Amplify.API.mutate(
-                ModelMutation.create(newGame),
-                { Log.i("My Amplify Backend", "Added Todo with id: ${it.data.id}") },
-                { Log.e("MyAmplify Backend", "Create failed", it) }
-
-            )
-
+            gameRepository.addGame(game = game)
+        }
+        viewModelScope.launch(Dispatchers.IO) {
         }
 
     }
@@ -80,6 +66,12 @@ class GameViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             gameRepository.deleteGame(game = game)
         }
+    }
+    fun getBacklog(id: String) {
+        Amplify.API.query(ModelQuery.get(BackLog::class.java, id),
+            { Log.i("MyAmplifyApp", "Query results = ${(it.data as BackLog).id}") },
+            { Log.e("MyAmplifyApp", "Query failed", it) }
+        );
     }
 
 }

@@ -1,46 +1,21 @@
 package com.amplifyframework.datastore.generated.model;
 
+import com.amplifyframework.core.model.Model;
 import com.amplifyframework.core.model.temporal.Temporal;
-import com.amplifyframework.core.model.ModelIdentifier;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.Objects;
 
 import androidx.core.util.ObjectsCompat;
 
-import com.amplifyframework.core.model.AuthStrategy;
-import com.amplifyframework.core.model.Model;
-import com.amplifyframework.core.model.ModelOperation;
-import com.amplifyframework.core.model.annotations.AuthRule;
-import com.amplifyframework.core.model.annotations.Index;
-import com.amplifyframework.core.model.annotations.ModelConfig;
-import com.amplifyframework.core.model.annotations.ModelField;
-import com.amplifyframework.core.model.query.predicate.QueryField;
-
-import static com.amplifyframework.core.model.query.predicate.QueryField.field;
+import java.util.Objects;
+import java.util.List;
 
 /** This is an auto generated class representing the Game type in your schema. */
-@SuppressWarnings("all")
-@ModelConfig(pluralName = "Games", type = Model.Type.USER, version = 1, authRules = {
-  @AuthRule(allow = AuthStrategy.OWNER, ownerField = "owner", identityClaim = "cognito:username", provider = "userPools", operations = { ModelOperation.CREATE, ModelOperation.UPDATE, ModelOperation.DELETE, ModelOperation.READ })
-}, hasLazySupport = true)
 public final class Game implements Model {
-  public static final GamePath rootPath = new GamePath("root", false, null);
-  public static final QueryField ID = field("Game", "id");
-  public static final QueryField NAME = field("Game", "name");
-  public static final QueryField DESCRIPTION = field("Game", "description");
-  private final @ModelField(targetType="ID", isRequired = true) String id;
-  private final @ModelField(targetType="String") String name;
-  private final @ModelField(targetType="String") String description;
-  private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
-  private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
-  /** @deprecated This API is internal to Amplify and should not be used. */
-  @Deprecated
-   public String resolveIdentifier() {
-    return id;
-  }
-  
+  private final String id;
+  private final String name;
+  private final String description;
+  private final String cover_art;
+  private final Temporal.Date release_date;
+  private final Double aggregated_rating;
   public String getId() {
       return id;
   }
@@ -53,18 +28,25 @@ public final class Game implements Model {
       return description;
   }
   
-  public Temporal.DateTime getCreatedAt() {
-      return createdAt;
+  public String getCoverArt() {
+      return cover_art;
   }
   
-  public Temporal.DateTime getUpdatedAt() {
-      return updatedAt;
+  public Temporal.Date getReleaseDate() {
+      return release_date;
   }
   
-  private Game(String id, String name, String description) {
+  public Double getAggregatedRating() {
+      return aggregated_rating;
+  }
+  
+  private Game(String id, String name, String description, String cover_art, Temporal.Date release_date, Double aggregated_rating) {
     this.id = id;
     this.name = name;
     this.description = description;
+    this.cover_art = cover_art;
+    this.release_date = release_date;
+    this.aggregated_rating = aggregated_rating;
   }
   
   @Override
@@ -78,8 +60,9 @@ public final class Game implements Model {
       return ObjectsCompat.equals(getId(), game.getId()) &&
               ObjectsCompat.equals(getName(), game.getName()) &&
               ObjectsCompat.equals(getDescription(), game.getDescription()) &&
-              ObjectsCompat.equals(getCreatedAt(), game.getCreatedAt()) &&
-              ObjectsCompat.equals(getUpdatedAt(), game.getUpdatedAt());
+              ObjectsCompat.equals(getCoverArt(), game.getCoverArt()) &&
+              ObjectsCompat.equals(getReleaseDate(), game.getReleaseDate()) &&
+              ObjectsCompat.equals(getAggregatedRating(), game.getAggregatedRating());
       }
   }
   
@@ -89,55 +72,33 @@ public final class Game implements Model {
       .append(getId())
       .append(getName())
       .append(getDescription())
-      .append(getCreatedAt())
-      .append(getUpdatedAt())
+      .append(getCoverArt())
+      .append(getReleaseDate())
+      .append(getAggregatedRating())
       .toString()
       .hashCode();
-  }
-  
-  @Override
-   public String toString() {
-    return new StringBuilder()
-      .append("Game {")
-      .append("id=" + String.valueOf(getId()) + ", ")
-      .append("name=" + String.valueOf(getName()) + ", ")
-      .append("description=" + String.valueOf(getDescription()) + ", ")
-      .append("createdAt=" + String.valueOf(getCreatedAt()) + ", ")
-      .append("updatedAt=" + String.valueOf(getUpdatedAt()))
-      .append("}")
-      .toString();
   }
   
   public static BuildStep builder() {
       return new Builder();
   }
   
-  /**
-   * WARNING: This method should not be used to build an instance of this object for a CREATE mutation.
-   * This is a convenience method to return an instance of the object with only its ID populated
-   * to be used in the context of a parameter in a delete mutation or referencing a foreign key
-   * in a relationship.
-   * @param id the id of the existing item this instance will represent
-   * @return an instance of this model with only ID populated
-   */
-  public static Game justId(String id) {
-    return new Game(
-      id,
-      null,
-      null
-    );
-  }
-  
   public CopyOfBuilder copyOfBuilder() {
     return new CopyOfBuilder(id,
       name,
-      description);
+      description,
+      cover_art,
+      release_date,
+      aggregated_rating);
   }
   public interface BuildStep {
     Game build();
     BuildStep id(String id);
     BuildStep name(String name);
     BuildStep description(String description);
+    BuildStep coverArt(String coverArt);
+    BuildStep releaseDate(Temporal.Date releaseDate);
+    BuildStep aggregatedRating(Double aggregatedRating);
   }
   
 
@@ -145,24 +106,38 @@ public final class Game implements Model {
     private String id;
     private String name;
     private String description;
+    private String cover_art;
+    private Temporal.Date release_date;
+    private Double aggregated_rating;
     public Builder() {
       
     }
     
-    private Builder(String id, String name, String description) {
+    private Builder(String id, String name, String description, String cover_art, Temporal.Date release_date, Double aggregated_rating) {
       this.id = id;
       this.name = name;
       this.description = description;
+      this.cover_art = cover_art;
+      this.release_date = release_date;
+      this.aggregated_rating = aggregated_rating;
     }
     
     @Override
      public Game build() {
-        String id = this.id != null ? this.id : UUID.randomUUID().toString();
         
         return new Game(
           id,
           name,
-          description);
+          description,
+          cover_art,
+          release_date,
+          aggregated_rating);
+    }
+    
+    @Override
+     public BuildStep id(String id) {
+        this.id = id;
+        return this;
     }
     
     @Override
@@ -177,21 +152,35 @@ public final class Game implements Model {
         return this;
     }
     
-    /**
-     * @param id id
-     * @return Current Builder instance, for fluent method chaining
-     */
-    public BuildStep id(String id) {
-        this.id = id;
+    @Override
+     public BuildStep coverArt(String coverArt) {
+        this.cover_art = coverArt;
+        return this;
+    }
+    
+    @Override
+     public BuildStep releaseDate(Temporal.Date releaseDate) {
+        this.release_date = releaseDate;
+        return this;
+    }
+    
+    @Override
+     public BuildStep aggregatedRating(Double aggregatedRating) {
+        this.aggregated_rating = aggregatedRating;
         return this;
     }
   }
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id, String name, String description) {
-      super(id, name, description);
+    private CopyOfBuilder(String id, String name, String description, String coverArt, Temporal.Date releaseDate, Double aggregatedRating) {
+      super(id, name, description, cover_art, release_date, aggregated_rating);
       
+    }
+    
+    @Override
+     public CopyOfBuilder id(String id) {
+      return (CopyOfBuilder) super.id(id);
     }
     
     @Override
@@ -203,13 +192,20 @@ public final class Game implements Model {
      public CopyOfBuilder description(String description) {
       return (CopyOfBuilder) super.description(description);
     }
-  }
-  
-
-  public static class GameIdentifier extends ModelIdentifier<Game> {
-    private static final long serialVersionUID = 1L;
-    public GameIdentifier(String id) {
-      super(id);
+    
+    @Override
+     public CopyOfBuilder coverArt(String coverArt) {
+      return (CopyOfBuilder) super.coverArt(coverArt);
+    }
+    
+    @Override
+     public CopyOfBuilder releaseDate(Temporal.Date releaseDate) {
+      return (CopyOfBuilder) super.releaseDate(releaseDate);
+    }
+    
+    @Override
+     public CopyOfBuilder aggregatedRating(Double aggregatedRating) {
+      return (CopyOfBuilder) super.aggregatedRating(aggregatedRating);
     }
   }
   
