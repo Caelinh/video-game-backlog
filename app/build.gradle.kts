@@ -68,6 +68,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
     implementation("com.amplifyframework.ui:authenticator:1.2.0")
     implementation("com.amplifyframework:aws-api:2.19.1")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation("io.github.husnjak:igdb-api-jvm:1.2.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
     implementation("androidx.core:core-ktx:1.13.1")

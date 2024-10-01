@@ -14,10 +14,13 @@ import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.ui.screens.LogView
 import com.wguproject.videogamebacklog.ui.screens.login.LoginView
 import com.wguproject.videogamebacklog.ui.screens.login.PostLoginView
+import com.wguproject.videogamebacklog.ui.screens.search.SearchScreen
+import com.wguproject.videogamebacklog.ui.screens.search.SearchViewModel
 
 @Composable
 fun Navigation(
     viewModel: GameViewModel = viewModel(),
+    searchViewModel: SearchViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
@@ -57,6 +60,9 @@ fun Navigation(
         ) {
             val id = if (it.arguments != null) it.arguments!!.getLong("id") else 0L
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
+        }
+        composable(Screen.SearchScreen.route){
+            SearchScreen(navController = navController, viewModel = searchViewModel)
         }
 
     }

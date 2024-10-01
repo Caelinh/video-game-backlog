@@ -37,11 +37,13 @@ class GameViewModel(
     lateinit var getAllGames: Flow<List<Game>>
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch() {
           getAllGames = gameRepository.getAllGames()
 
         }
     }
+
+
 
     fun addGame(game: Game) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -14,6 +14,7 @@ data class Game(
     val description: String = ""
 )
 
+
 object DummyGame{
     val backLog = listOf(
         Game(title = "Game1", description = "A really good game I can't wait to play."),
