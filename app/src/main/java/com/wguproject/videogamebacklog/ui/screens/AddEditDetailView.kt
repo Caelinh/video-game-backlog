@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
 import com.wguproject.videogamebacklog.GameViewModel
 import com.wguproject.videogamebacklog.R
+import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.data.Game
 import kotlinx.coroutines.launch
 
@@ -118,6 +119,7 @@ fun AddEditDetailView(
                         snackMessage.value = "Game saved"
                     }
                 } else {
+                    navController.navigate(Screen.SearchScreen.route)
                     snackMessage.value = "Enter fields to create a wish"
                 }
                 scope.launch {
