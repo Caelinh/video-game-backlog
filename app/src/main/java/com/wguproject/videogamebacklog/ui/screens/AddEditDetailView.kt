@@ -1,5 +1,6 @@
 package com.wguproject.videogamebacklog.ui.screens
 
+import androidx.collection.emptyIntList
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +43,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AddEditDetailView(
-    id: Long, viewModel: GameViewModel, navController: NavController
+    id: Int, viewModel: GameViewModel, navController: NavController
 ) {
 
     val snackMessage = remember {
@@ -50,10 +51,12 @@ fun AddEditDetailView(
     }
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
-    if (id != 0L) {
-        val game = viewModel.getGameById(id).collectAsState(initial = Game(0L, "", ""))
-        viewModel.gameTitleState = game.value.title
-        viewModel.gameDescriptionState = game.value.description
+    if (id != 0) {
+        val game = viewModel.getGameById(id).collectAsState(initial = Game(0, 0.0, 0,"",0L,
+            emptyList(),"", emptyList(),"")
+        )
+        viewModel.gameTitleState = game.value.name
+        viewModel.gameDescriptionState = game.value.summary?:"None"
     } else {
         viewModel.gameTitleState = ""
         viewModel.gameDescriptionState = ""
@@ -65,7 +68,7 @@ fun AddEditDetailView(
         scaffoldState = scaffoldState,
         topBar = {
             AppBarView(
-                title = if (id != 0L) stringResource(id = R.string.update_game)
+                title = if (id != 0) stringResource(id = R.string.update_game)
                 else stringResource(id = R.string.add_game)
             ) { navController.navigateUp() }
         },
@@ -90,22 +93,9 @@ fun AddEditDetailView(
             Spacer(Modifier.height(10.dp))
             Button(onClick = {
                 if (viewModel.gameTitleState.isNotEmpty() && viewModel.gameDescriptionState.isNotEmpty()) {
-                    if (id != 0L) {
-                        viewModel.updateGame(
-                            Game(
-                                id = id,
-                                title = viewModel.gameTitleState.trim(),
-                                description = viewModel.gameDescriptionState.trim()
-                            )
-                        )
+                    if (id != 0) {
                         snackMessage.value = "Game Updated"
                     } else {
-                        viewModel.addGame(
-                            Game(
-                                title = viewModel.gameTitleState.trim(),
-                                description = viewModel.gameDescriptionState.trim()
-                            )
-                        )
 //                        val newGame = com.amplifyframework.datastore.generated.model.Game.builder()
 //                            .name(viewModel.gameTitleState.trim())
 //                            .description(viewModel.gameDescriptionState.trim())
@@ -128,7 +118,7 @@ fun AddEditDetailView(
                 }
             }) {
                 Text(
-                    text = if (id != 0L) stringResource(id = R.string.update_game)
+                    text = if (id != 0) stringResource(id = R.string.update_game)
                     else stringResource(
                         id = R.string.add_game
                     ), style = TextStyle(

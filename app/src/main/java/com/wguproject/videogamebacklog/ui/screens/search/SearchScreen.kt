@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,18 +33,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.amplifyframework.api.ApiException
 import com.wguproject.videogamebacklog.R
-import com.wguproject.videogamebacklog.data.APIGameItem
+import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
+import com.wguproject.videogamebacklog.utils.rememberKeyboardController
 
 @Composable
 fun SearchScreen(
@@ -51,6 +56,8 @@ fun SearchScreen(
     viewModel: SearchViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val viewState by viewModel.gameListState
+    val context = LocalContext.current
+    val hideKeyboard = rememberKeyboardController()
 
     Scaffold(
         topBar = {
@@ -70,29 +77,64 @@ fun SearchScreen(
                 label = "Title",
                 value = viewModel.searchTitleState,
                 onValueChanged = { viewModel.onSearchTitleChanged(it) })
-            Button(onClick = { viewModel.searchForGame(viewModel.searchTitleState) }) {
+            Button(onClick = {
+                viewModel.searchForGame(viewModel.searchTitleState)
+                viewModel.searchTitleState = ""
+                hideKeyboard()
+            }) {
                 Text(text = "Search")
             }
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
                     viewState.loading -> {
-                        CircularProgressIndicator(Modifier.align(Alignment.Center))
-                    }
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "Searching for games",
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                            CircularProgressIndicator(
+                                modifier = Modifier.offset(y = 6.dp)
+                            )
+                        }
 
+                    }
                     viewState.error != null -> {
-                        Text("Error occurred during search")
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .offset(y = 8.dp),
+                            text = "Error occurred during search, Please try again",
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp)
                     }
-
                     else -> {
-                        SearchResults(results = viewState.list)
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                        ) {
+                            items(viewState.list, key = { item -> item.id }) { game ->
+                                GameItem(game = game,
+                                    onClick = {
+                                        navController.navigate(Screen.SearchDetailScreen.route + "/${game.id}")
+                                    })
+                            }
+                        }
                     }
                 }
             }
-
         }
 
     }
+
 }
+
 
 @Composable
 fun SearchTextField(
@@ -116,27 +158,13 @@ fun SearchTextField(
 }
 
 @Composable
-fun SearchResults(results: List<APIGameItem>) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        items(results) { game ->
-            GameItem(game = game)
-        }
-    }
-}
-
-@Composable
-fun GameItem(game: APIGameItem) {
+fun GameItem(game: Game, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 4.dp, start = 4.dp, end = 4.dp)
             .height(100.dp)
-            .clickable {},
-
+            .clickable { onClick() },
         elevation = 10.dp,
         backgroundColor = Color.White
     ) {
@@ -152,9 +180,11 @@ fun GameItem(game: APIGameItem) {
                     .fillMaxHeight()
                     .padding(8.dp)
             )
-
-            Column(Modifier.fillMaxWidth()
-                    .padding(8.dp)) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
 
                 Text(
                     text = game.name,
@@ -176,5 +206,13 @@ fun GameItem(game: APIGameItem) {
 
     }
 }
+@Preview(
+    showBackground = true
+)
+@Composable
+fun DefaultPreview(){
+
+}
+
 
 
