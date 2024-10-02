@@ -24,6 +24,13 @@ abstract class GameDao {
     abstract suspend fun deleteGame(gameEntity: Game)
 
     @Query("Select * from `game-table` where id = :id")
-    abstract fun getGamebyId(id:Long): Flow<Game>
+    abstract fun getGamebyId(id:Int): Flow<Game>
+
+    @Query("Select * from `game-table` where completed = true")
+    abstract fun getAllCompletedGames(): Flow<List<Game>>
+
+    @Query("Select * from `game-table` where completed = false")
+    abstract fun getAllBacklogGames(): Flow<List<Game>>
+
 
 }

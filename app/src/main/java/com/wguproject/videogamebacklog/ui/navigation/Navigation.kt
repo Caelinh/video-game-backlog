@@ -14,6 +14,7 @@ import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.ui.screens.LogView
 import com.wguproject.videogamebacklog.ui.screens.login.LoginView
 import com.wguproject.videogamebacklog.ui.screens.login.PostLoginView
+import com.wguproject.videogamebacklog.ui.screens.search.SearchDetailScreen
 import com.wguproject.videogamebacklog.ui.screens.search.SearchScreen
 import com.wguproject.videogamebacklog.ui.screens.search.SearchViewModel
 
@@ -52,17 +53,29 @@ fun Navigation(
             Screen.AddScreen.route + "/{id}",
             arguments = listOf(
                 navArgument("id") {
-                    type = NavType.LongType
-                    defaultValue = 0L
+                    type = NavType.IntType
+                    defaultValue = 0
                     nullable = false
                 }
             )
         ) {
-            val id = if (it.arguments != null) it.arguments!!.getLong("id") else 0L
+            val id = if (it.arguments != null) it.arguments!!.getInt("id") else 0
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
         }
         composable(Screen.SearchScreen.route){
             SearchScreen(navController = navController, viewModel = searchViewModel)
+        }
+        composable(route = Screen.SearchDetailScreen.route + "/{id}",
+            arguments = listOf(
+                        navArgument("id"){type = NavType.IntType}
+            )
+        ){
+            val id = if (it.arguments != null) it.arguments!!.getInt("id") else 0
+            SearchDetailScreen(
+                id = id,
+                viewModel = searchViewModel,
+                navController = navController
+            )
         }
 
     }

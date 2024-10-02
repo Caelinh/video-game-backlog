@@ -9,8 +9,10 @@ class GameRepository(private val gameDao: GameDao) {
     }
 
     fun getAllGames(): Flow<List<Game>> = gameDao.getAllGames()
+    fun getAllCompletedGames(): Flow<List<Game>> = gameDao.getAllCompletedGames()
+    fun getAllBacklogGames(): Flow<List<Game>> = gameDao.getAllBacklogGames()
 
-    fun getGameById(id:Long):Flow<Game> {
+    fun getGameById(id:Int):Flow<Game> {
         return  gameDao.getGamebyId(id)
     }
 
@@ -21,4 +23,5 @@ class GameRepository(private val gameDao: GameDao) {
     suspend fun deleteGame(game: Game){
         gameDao.deleteGame(game)
     }
+
 }

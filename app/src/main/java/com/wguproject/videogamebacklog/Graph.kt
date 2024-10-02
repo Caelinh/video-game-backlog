@@ -13,6 +13,8 @@ object Graph {
     }
 
     fun provide(context: Context){
-        database = Room.databaseBuilder(context, GameDatabase::class.java,"vgb.db").build()
+        database = Room.databaseBuilder(context, GameDatabase::class.java,"vgb.db")
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

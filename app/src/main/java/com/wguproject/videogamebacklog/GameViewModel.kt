@@ -21,8 +21,6 @@ class GameViewModel(
     private val gameRepository: GameRepository = Graph.gameRepository
 ) : ViewModel() {
 
-
-
     var gameTitleState by mutableStateOf("")
     var gameDescriptionState by mutableStateOf("")
 
@@ -34,27 +32,22 @@ class GameViewModel(
         gameDescriptionState = newString
     }
 
-    lateinit var getAllGames: Flow<List<Game>>
+    lateinit var getAllBackLogGames: Flow<List<Game>>
 
     init {
         viewModelScope.launch() {
-          getAllGames = gameRepository.getAllGames()
+          getAllBackLogGames = gameRepository.getAllBacklogGames()
 
         }
     }
-
-
 
     fun addGame(game: Game) {
         viewModelScope.launch(Dispatchers.IO) {
             gameRepository.addGame(game = game)
         }
-        viewModelScope.launch(Dispatchers.IO) {
-        }
 
     }
-
-    fun getGameById(id: Long): Flow<Game> {
+    fun getGameById(id: Int): Flow<Game> {
         return gameRepository.getGameById(id)
     }
 
