@@ -62,8 +62,6 @@ fun AddEditDetailView(
         viewModel.gameDescriptionState = ""
     }
 
-
-
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {

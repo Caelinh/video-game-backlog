@@ -1,6 +1,7 @@
 package com.wguproject.videogamebacklog.ui.screens.search
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
@@ -24,6 +25,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,11 +38,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import java.util.Date
 
@@ -48,21 +54,17 @@ fun SearchDetailScreen(
     viewModel: SearchViewModel,
     navController: NavController
 ) {
-    if (id != 0) {
-        viewModel.game = viewModel.findGameById(id)!!
-        val game = viewModel.game
-        if (game != null) {
-            viewModel.detailGameName = game.name
-            viewModel.detailGameCover = game.coverUrl ?: "No pic"
-            viewModel.detailGameRating = game.aggregated_rating ?: 0.0
-            viewModel.detailGameSummary = game.summary ?: "Nothing"
-            viewModel.detailGameRelease = game.first_release_date ?: 0L
-        }
+    val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(id){
+        if (id != 0){
+            viewModel.loadGameDetails(id)
+        }
     }
     Scaffold(
         topBar = { AppBarView(title = "Video GameBacklog") }
     ) {
+
         Column(
             modifier = Modifier
                 .padding(it)
@@ -72,51 +74,62 @@ fun SearchDetailScreen(
             verticalArrangement = Arrangement.Center,
 
             ) {
-            Image(
-                painter = rememberAsyncImagePainter(viewModel.detailGameCover),
-                contentDescription = "Cover art for a video game.",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(240.dp)
-            )
-            Text(
-                text = viewModel.detailGameName,
-                color = Color.Black,
-                style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 18.sp),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Summary: ${viewModel.detailGameSummary}",
-                color = Color.Black,
-                style = TextStyle(fontWeight = FontWeight.Normal),
-                textAlign = TextAlign.Justify,
-                modifier = Modifier
-                    .fillMaxHeight(.5f)
-                    .padding(8.dp)
-                    .verticalScroll(rememberScrollState())
-            )
-            Text(
-                text = "Release Date: ${viewModel.toLocalDateTime(viewModel.detailGameRelease)}",
-                color = Color.Black,
-                style = TextStyle(fontWeight = FontWeight.ExtraBold),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Rating: ${viewModel.detailGameRating.roundToInt()}",
-                color = Color.Black,
-                style = TextStyle(fontWeight = FontWeight.ExtraBold),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Button(
-                onClick = {
-                    viewModel.addGame(game = viewModel.game)
-                    navController.navigate(Screen.HomeScreen.route)
-                }) {
-                Text(text = "Save", color = Color.White)
+            uiState.selectedGame?.let { game ->
+
+
+                Image(
+                    painter = rememberAsyncImagePainter(game.coverUrl),
+                    contentDescription = "Cover art for a video game.",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(240.dp)
+                )
+                Text(
+                    text = game.name,
+                    color = Color.Black,
+                    style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 18.sp),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "Summary: ${game.summary}",
+                    color = Color.Black,
+                    style = TextStyle(fontWeight = FontWeight.Normal),
+                    textAlign = TextAlign.Justify,
+                    modifier = Modifier
+                        .fillMaxHeight(.5f)
+                        .padding(8.dp)
+                        .verticalScroll(rememberScrollState())
+                )
+                Text(
+                    text = "Release Date: ${viewModel.convertUnixTimestamp(game.first_release_date?:0L)}",
+                    color = Color.Black,
+                    style = TextStyle(fontWeight = FontWeight.ExtraBold),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "Rating: ${game.aggregated_rating?.roundToInt()}",
+                    color = Color.Black,
+                    style = TextStyle(fontWeight = FontWeight.ExtraBold),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                Button(
+                    onClick = {
+                        viewModel.viewModelScope.launch {
+                            val result = viewModel.addGame(game)
+                            Log.i("Saving the game", game.toString())
+                            if (result.isSuccess){
+                                viewModel.clearSearchResults()
+                                navController.navigate(Screen.HomeScreen.route)
+                            }
+                        }
+
+                    }) {
+                    Text(text = "Save", color = Color.White)
+                }
             }
         }
     }

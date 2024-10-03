@@ -62,11 +62,5 @@ class GameViewModel(
             gameRepository.deleteGame(game = game)
         }
     }
-    fun getBacklog(id: String) {
-        Amplify.API.query(ModelQuery.get(BackLog::class.java, id),
-            { Log.i("MyAmplifyApp", "Query results = ${(it.data as BackLog).id}") },
-            { Log.e("MyAmplifyApp", "Query failed", it) }
-        );
-    }
 
 }
