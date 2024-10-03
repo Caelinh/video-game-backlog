@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import com.wguproject.videogamebacklog.ui.screens.AddEditDetailView
 import com.wguproject.videogamebacklog.GameViewModel
 import com.wguproject.videogamebacklog.Screen
+import com.wguproject.videogamebacklog.ui.screens.CompletedLog.CompletedLogScreen
+import com.wguproject.videogamebacklog.ui.screens.CompletedLog.CompletedLogViewModel
 import com.wguproject.videogamebacklog.ui.screens.LogView
 import com.wguproject.videogamebacklog.ui.screens.login.LoginView
 import com.wguproject.videogamebacklog.ui.screens.login.PostLoginView
@@ -22,6 +24,7 @@ import com.wguproject.videogamebacklog.ui.screens.search.SearchViewModel
 fun Navigation(
     viewModel: GameViewModel = viewModel(),
     searchViewModel: SearchViewModel = viewModel(),
+    completedLogViewModel: CompletedLogViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
@@ -76,6 +79,9 @@ fun Navigation(
                 viewModel = searchViewModel,
                 navController = navController
             )
+        }
+        composable(route = Screen.CompletedLogScreen.route){
+            CompletedLogScreen(navController = navController,completedLogViewModel)
         }
 
     }

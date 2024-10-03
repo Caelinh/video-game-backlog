@@ -73,6 +73,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("io.github.husnjak:igdb-api-jvm:1.2.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(platform("androidx.compose:compose-bom:2024.09.02"))
+
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
     implementation("androidx.core:core-ktx:1.13.1")

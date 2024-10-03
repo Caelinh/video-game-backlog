@@ -6,6 +6,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,9 +40,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
@@ -56,77 +59,88 @@ fun LogView(
     navController: NavController,
     viewModel: GameViewModel
 ) {
-    val context = LocalContext.current
     Scaffold(
-        topBar = {
-            AppBarView(title = "Video Game Backlog") {
-                Toast.makeText(context, "Button Clicked", Toast.LENGTH_LONG).show()
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(all = 20.dp),
-                contentColor = Color.White,
-                containerColor = Color.Black,
-                onClick = {
-                    navController.navigate(Screen.SearchScreen.route)
-                })
-            {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
-            }
-        }
+        bottomBar = { AppBarBottom(navController) }
     ) {
         val gameList = viewModel.getAllBackLogGames.collectAsState(initial = listOf())
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(gameList.value, key = {game -> game.id  }) { game ->
-                val dismissState = rememberDismissState(
-                    confirmStateChange = {
-                        if (it == DismissValue.DismissedToStart) {
-                            viewModel.deleteGame(game)
-                        } else if (it == DismissValue.DismissedToEnd){
-                            val completedGame = game.copy(
-                                completed = true
-                            )
-                            Log.i("SwipeLog",completedGame.toString())
-                            viewModel.updateGame(completedGame)
-                        }
-
-                        true
-                    }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "BackLog",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
-                SwipeToDismiss(
-                    state = dismissState,
-                    background ={
-                                val color by animateColorAsState(
-                                    if (dismissState.dismissDirection == DismissDirection.EndToStart) Color.Red
-                                    else if ( dismissState.dismissDirection == DismissDirection.StartToEnd) Color.Cyan
-                                    else Color.Transparent
-                                , label = ""
+            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
+                items(gameList.value, key = { game -> game.id }) { game ->
+                    val dismissState = rememberDismissState(
+                        confirmStateChange = {
+                            if (it == DismissValue.DismissedToStart) {
+                                viewModel.deleteGame(game)
+                            } else if (it == DismissValue.DismissedToEnd) {
+                                val completedGame = game.copy(
+                                    completed = true
                                 )
-                        val alignment = Alignment.CenterEnd
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(horizontal = 20.dp),
-                            contentAlignment = alignment
-                        ){
-                            Icon(Icons.Default.Delete, contentDescription = "Delete Icon", tint = Color.White)
+                                Log.i("SwipeLog", completedGame.toString())
+                                viewModel.updateGame(completedGame)
+                            }
+
+                            true
                         }
-                    },
-                    directions = setOf(DismissDirection.EndToStart,DismissDirection.StartToEnd),
-                    dismissThresholds = {FractionalThreshold(0.25F)},
-                    dismissContent = {
-                        VideoGameItem(game = game) {
-                            val id = game.id
-                            navController.navigate(Screen.AddScreen.route + "/$id")
-                        }
-                    })
+                    )
+                    SwipeToDismiss(
+                        state = dismissState,
+                        background = {
+                            val color by animateColorAsState(
+                                if (dismissState.dismissDirection == DismissDirection.EndToStart) Color.Red
+                                else if (dismissState.dismissDirection == DismissDirection.StartToEnd) Color.Cyan
+                                else Color.Transparent, label = ""
+                            )
+                            val alignment = Alignment.CenterEnd
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(color)
+                                    .padding(horizontal = 20.dp),
+                                contentAlignment = Alignment.CenterEnd
+
+                            ) {
+                                Icon(
+                                    Icons.Default.Done,
+                                    contentDescription = "Complete Icon",
+                                    tint = Color.White
+                                )
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = "Delete Icon",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        directions = setOf(
+                            DismissDirection.EndToStart,
+                            DismissDirection.StartToEnd
+                        ),
+                        dismissThresholds = { FractionalThreshold(0.25F) },
+                        dismissContent = {
+                            VideoGameItem(game = game) {
+                                val id = game.id
+                                navController.navigate(Screen.AddScreen.route + "/$id")
+                            }
+                        })
+                }
             }
         }
     }

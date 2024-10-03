@@ -10,9 +10,8 @@ import com.wguproject.videogamebacklog.utils.ListIntConverter
 @Entity(tableName = "game-table")
 @TypeConverters(ListIntConverter::class)
 data class Game(
-    @PrimaryKey
-    @NonNull
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id:Int,
     @ColumnInfo(name = "aggregated_rating")
     val aggregated_rating: Double? = null,
     @ColumnInfo(name = "category")

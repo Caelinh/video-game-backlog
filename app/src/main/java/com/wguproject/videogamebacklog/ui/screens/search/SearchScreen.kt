@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,16 +23,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -47,21 +53,23 @@ import coil.compose.rememberAsyncImagePainter
 import com.wguproject.videogamebacklog.R
 import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.data.Game
+import com.wguproject.videogamebacklog.ui.screens.AppBarBottom
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
 import com.wguproject.videogamebacklog.utils.rememberKeyboardController
+import java.util.Date
+import kotlin.math.roundToInt
 
 @Composable
 fun SearchScreen(
     navController: NavController,
-    viewModel: SearchViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: SearchViewModel
 ) {
-    val viewState by viewModel.gameListState
-    val context = LocalContext.current
+    val viewState by viewModel.uiState.collectAsState()
     val hideKeyboard = rememberKeyboardController()
 
     Scaffold(
-        topBar = {
-            AppBarView(title = "Video Game Backlog")
+        bottomBar = {
+            AppBarBottom(navController)
         }
     ) {
         Spacer(Modifier.height(10.dp))
@@ -74,14 +82,16 @@ fun SearchScreen(
         ) {
             Spacer(Modifier.height(10.dp))
             SearchTextField(
-                label = "Title",
-                value = viewModel.searchTitleState,
+                label = "Game Title",
+                value = viewState.searchTitle,
                 onValueChanged = { viewModel.onSearchTitleChanged(it) })
+            Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
-                viewModel.searchForGame(viewModel.searchTitleState)
-                viewModel.searchTitleState = ""
+                viewModel.searchForGame(viewState.searchTitle)
+                viewModel.clearSearch()
                 hideKeyboard()
-            }) {
+            }
+                ) {
                 Text(text = "Search")
             }
             Box(modifier = Modifier.fillMaxSize()) {
@@ -120,7 +130,7 @@ fun SearchScreen(
                                 .padding(8.dp),
                         ) {
                             items(viewState.list, key = { item -> item.id }) { game ->
-                                GameItem(game = game,
+                                GameItem(game = game, date = viewModel.convertUnixTimestamp(game.first_release_date?:0L),
                                     onClick = {
                                         navController.navigate(Screen.SearchDetailScreen.route + "/${game.id}")
                                     })
@@ -144,7 +154,7 @@ fun SearchTextField(
         value = value,
         onValueChange = onValueChanged,
         label = { Text(text = label, color = Color.Black) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(.9f),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Color.Black,
@@ -153,12 +163,15 @@ fun SearchTextField(
             unfocusedBorderColor = colorResource(id = R.color.black),
             focusedLabelColor = colorResource(id = R.color.black),
             unfocusedLabelColor = colorResource(id = R.color.black),
-        )
+        ),
+        leadingIcon = {
+            Icon(imageVector = Icons.Filled.Search,null)
+        }
     )
 }
 
 @Composable
-fun GameItem(game: Game, onClick: () -> Unit) {
+fun GameItem(game: Game,date:String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -170,48 +183,41 @@ fun GameItem(game: Game, onClick: () -> Unit) {
     ) {
         Row(
             Modifier
-                .wrapContentSize()
                 .padding(16.dp)
         ) {
             Image(
                 painter = rememberAsyncImagePainter(game.coverUrl),
                 contentDescription = "Cover art for a video game.",
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(8.dp)
+                    .size(80.dp)
+                    .padding(end = 16.dp)
             )
             Column(
                 Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(4.dp)
             ) {
-
                 Text(
                     text = game.name,
                     color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold)
+                    style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
                 )
                 Text(
-                    text = "Release Date: ${game.first_release_date.toString()}",
+                    text = "Release Date: $date",
                     color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold)
+                    style = TextStyle(fontWeight = FontWeight.Medium)
                 )
+
+            }
+            game.aggregated_rating?.let { rating ->
                 Text(
-                    text = "Rating: ${game.aggregated_rating}",
-                    color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold)
+                    text = "Rating: ${rating.roundToInt()}",
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Gray
                 )
             }
+
         }
-
     }
-}
-@Preview(
-    showBackground = true
-)
-@Composable
-fun DefaultPreview(){
-
 }
 
 
