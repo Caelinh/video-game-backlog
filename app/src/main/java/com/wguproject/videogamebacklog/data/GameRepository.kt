@@ -9,6 +9,9 @@ class GameRepository(private val gameDao: GameDao) {
     }
 
     fun getAllGames(): Flow<List<Game>> = gameDao.getAllGames()
+
+    fun getAllComparisonGames(): Flow<List<Game>> = gameDao.getAllGamesForComparison()
+
     fun getAllCompletedGames(): Flow<List<Game>> = gameDao.getAllCompletedGames()
     fun getAllBacklogGames(): Flow<List<Game>> = gameDao.getAllBacklogGames()
 

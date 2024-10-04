@@ -16,7 +16,8 @@ abstract class GameDao {
 
     @Query("Select * from `game-table`")
     abstract fun getAllGames(): Flow<List<Game>>
-
+    @Query("Select * from `game-table`")
+    abstract fun getAllGamesForComparison(): Flow<List<Game>>
     @Update
     abstract suspend fun updateGame(gameEntity: Game)
 
