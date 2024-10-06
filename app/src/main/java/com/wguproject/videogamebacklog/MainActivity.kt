@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.api.aws.AWSApiPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.auth.options.AuthFetchSessionOptions
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.configuration.AmplifyOutputs
+import com.amplifyframework.core.configuration.AmplifyOutputsData
+import com.amplifyframework.ui.authenticator.ui.Authenticator
 import com.wguproject.videogamebacklog.ui.navigation.Navigation
 import com.wguproject.videogamebacklog.ui.theme.VideoGameBacklogTheme
 
@@ -27,7 +30,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+                    Authenticator {
+                        Navigation()
+                    }
+
                 }
             }
         }

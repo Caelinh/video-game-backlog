@@ -15,6 +15,7 @@ import com.wguproject.videogamebacklog.ui.screens.CompletedLog.CompletedLogScree
 import com.wguproject.videogamebacklog.ui.screens.CompletedLog.CompletedLogViewModel
 import com.wguproject.videogamebacklog.ui.screens.LogView
 import com.wguproject.videogamebacklog.ui.screens.login.LoginView
+import com.wguproject.videogamebacklog.ui.screens.login.LogoutView
 import com.wguproject.videogamebacklog.ui.screens.login.PostLoginView
 import com.wguproject.videogamebacklog.ui.screens.recommendations.RecommendedGamesScreen
 import com.wguproject.videogamebacklog.ui.screens.recommendations.RecommendedGamesViewModel
@@ -89,6 +90,9 @@ fun Navigation(
         }
         composable(route = Screen.RecommendedGamesScreen.route){
             RecommendedGamesScreen(navController = navController, viewModel = recommendedGamesViewModel)
+        }
+        composable(route = Screen.SignOutScreen.route){
+            LogoutView(navController = navController)
         }
 
     }

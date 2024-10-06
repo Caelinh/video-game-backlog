@@ -34,7 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -84,7 +86,8 @@ fun SearchScreen(
             SearchTextField(
                 label = "Game Title",
                 value = viewState.searchTitle,
-                onValueChanged = { viewModel.onSearchTitleChanged(it) })
+                onValueChanged = { viewModel.onSearchTitleChanged(it)
+                })
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
                 viewModel.searchForGame(viewState.searchTitle)
@@ -150,6 +153,7 @@ fun SearchScreen(
 fun SearchTextField(
     label: String, value: String, onValueChanged: (String) -> Unit
 ) {
+    var nameError by remember { mutableStateOf<String?>(null) }
     OutlinedTextField(
         value = value,
         onValueChange = onValueChanged,
@@ -219,6 +223,7 @@ fun GameItem(game: Game,date:String, onClick: () -> Unit) {
         }
     }
 }
+
 
 
 

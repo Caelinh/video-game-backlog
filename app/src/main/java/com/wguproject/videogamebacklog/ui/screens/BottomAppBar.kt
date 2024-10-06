@@ -75,13 +75,13 @@ fun AppBarBottom(navController: NavController) {
                 IconButton(modifier = Modifier.size(60.dp), onClick = { navController.navigate(Screen.RecommendedGamesScreen.route) }) {
                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                        Icon(
-                           painter = painterResource(id = R.mipmap.ic_gamepad_foreground),
+                           painter = painterResource(id = R.drawable.game_controller_filled),
                            contentDescription = "Localized description",
                        )
                        Text(text = "Discover", fontSize = 12.sp)
                    }
                 }
-                IconButton(modifier = Modifier.size(60.dp), onClick = { /* do something */ }) {
+                IconButton(modifier = Modifier.size(60.dp), onClick = { navController.navigate(Screen.SignOutScreen.route) }) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
                             Icons.Filled.AccountBox,
