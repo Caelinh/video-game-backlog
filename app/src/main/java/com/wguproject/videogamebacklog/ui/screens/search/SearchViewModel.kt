@@ -169,6 +169,7 @@ class SearchViewModel(
             "Release date unknown"
         }
     }
+
 }
 
 

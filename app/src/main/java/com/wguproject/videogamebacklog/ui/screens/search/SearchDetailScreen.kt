@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.data.Game
+import com.wguproject.videogamebacklog.ui.screens.AppBarBottom
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -62,7 +63,7 @@ fun SearchDetailScreen(
         }
     }
     Scaffold(
-        topBar = { AppBarView(title = "Video GameBacklog") }
+        bottomBar = {AppBarBottom(navController) }
     ) {
 
         Column(

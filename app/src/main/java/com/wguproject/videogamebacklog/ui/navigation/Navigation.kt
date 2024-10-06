@@ -15,7 +15,10 @@ import com.wguproject.videogamebacklog.ui.screens.CompletedLog.CompletedLogScree
 import com.wguproject.videogamebacklog.ui.screens.CompletedLog.CompletedLogViewModel
 import com.wguproject.videogamebacklog.ui.screens.LogView
 import com.wguproject.videogamebacklog.ui.screens.login.LoginView
+import com.wguproject.videogamebacklog.ui.screens.login.LogoutView
 import com.wguproject.videogamebacklog.ui.screens.login.PostLoginView
+import com.wguproject.videogamebacklog.ui.screens.recommendations.RecommendedGamesScreen
+import com.wguproject.videogamebacklog.ui.screens.recommendations.RecommendedGamesViewModel
 import com.wguproject.videogamebacklog.ui.screens.search.SearchDetailScreen
 import com.wguproject.videogamebacklog.ui.screens.search.SearchScreen
 import com.wguproject.videogamebacklog.ui.screens.search.SearchViewModel
@@ -25,7 +28,9 @@ fun Navigation(
     viewModel: GameViewModel = viewModel(),
     searchViewModel: SearchViewModel = viewModel(),
     completedLogViewModel: CompletedLogViewModel = viewModel(),
+    recommendedGamesViewModel: RecommendedGamesViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
+
 ) {
     NavHost(
         navController = navController,
@@ -82,6 +87,12 @@ fun Navigation(
         }
         composable(route = Screen.CompletedLogScreen.route){
             CompletedLogScreen(navController = navController,completedLogViewModel)
+        }
+        composable(route = Screen.RecommendedGamesScreen.route){
+            RecommendedGamesScreen(navController = navController, viewModel = recommendedGamesViewModel)
+        }
+        composable(route = Screen.SignOutScreen.route){
+            LogoutView(navController = navController)
         }
 
     }

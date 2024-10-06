@@ -9,16 +9,26 @@ android {
     compileSdk = 34
 
     defaultConfig {
+
+        buildConfigField(
+            "String",
+            "TEST_API_KEY",
+            "\"${project.findProperty("API_KEY")}\""
+        )
+
         applicationId = "com.wguproject.videogamebacklog"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
+
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
     }
 
     buildTypes {
@@ -40,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -70,7 +81,7 @@ dependencies {
     implementation("com.amplifyframework:aws-api:2.19.1")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation ("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("io.github.husnjak:igdb-api-jvm:1.2.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation(platform("androidx.compose:compose-bom:2024.09.02"))

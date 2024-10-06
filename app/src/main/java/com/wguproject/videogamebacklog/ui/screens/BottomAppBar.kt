@@ -1,6 +1,7 @@
 package com.wguproject.videogamebacklog.ui.screens
 
 
+import android.media.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
@@ -33,9 +35,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.wguproject.videogamebacklog.R
 import com.wguproject.videogamebacklog.Screen
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
@@ -68,17 +72,23 @@ fun AppBarBottom(navController: NavController) {
                         Text(text = "Complete", fontSize = 12.sp)
                     }
                 }
-                IconButton(modifier = Modifier.size(48.dp), onClick = { /* do something */ }) {
-                    Icon(
-                        Icons.Filled.Build,
-                        contentDescription = "Localized description",
-                    )
+                IconButton(modifier = Modifier.size(60.dp), onClick = { navController.navigate(Screen.RecommendedGamesScreen.route) }) {
+                   Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                       Icon(
+                           painter = painterResource(id = R.drawable.game_controller_filled),
+                           contentDescription = "Localized description",
+                       )
+                       Text(text = "Discover", fontSize = 12.sp)
+                   }
                 }
-                IconButton(modifier = Modifier.size(48.dp), onClick = { /* do something */ }) {
-                    Icon(
-                        Icons.Filled.DateRange,
-                        contentDescription = "Localized description",
-                    )
+                IconButton(modifier = Modifier.size(60.dp), onClick = { navController.navigate(Screen.SignOutScreen.route) }) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Filled.AccountBox,
+                            contentDescription = "Localized description",
+                        )
+                        Text(text = "Account", fontSize = 12.sp)
+                    }
                 }
             }
         },

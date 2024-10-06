@@ -11,18 +11,18 @@ import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-
+private const val apiKey = BuildConfig.API_KEY
 interface APIService{
 
-    @Headers("x-api-key: LyTid97mtE6PnFHSnIRn5rOQdYyo0JR9mq2AtWL7","Content-Type: text/plain")
+    @Headers("x-api-key: $apiKey","Content-Type: text/plain")
     @POST("games")
     suspend fun getGames(@Body query:RequestBody): List<Game>
 
-    @Headers("x-api-key: LyTid97mtE6PnFHSnIRn5rOQdYyo0JR9mq2AtWL7",)
+    @Headers("x-api-key: $apiKey",)
     @POST("search")
     suspend fun searchGames(@Body string: String): List<Game>
 
-    @Headers("x-api-key: LyTid97mtE6PnFHSnIRn5rOQdYyo0JR9mq2AtWL7","Content-Type: text/plain")
+    @Headers("x-api-key: $apiKey","Content-Type: text/plain")
     @POST("covers")
     suspend fun getCovers(@Body query:RequestBody): List<CoverResponse>
 
