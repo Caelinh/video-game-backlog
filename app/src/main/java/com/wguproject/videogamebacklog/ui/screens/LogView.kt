@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -96,7 +99,6 @@ fun LogView(
                                 Log.i("SwipeLog", completedGame.toString())
                                 viewModel.updateGame(completedGame)
                             }
-
                             true
                         }
                     )
@@ -118,11 +120,6 @@ fun LogView(
 
                             ) {
                                 Icon(
-                                    Icons.Default.Done,
-                                    contentDescription = "Complete Icon",
-                                    tint = Color.White
-                                )
-                                Icon(
                                     Icons.Default.Delete,
                                     contentDescription = "Delete Icon",
                                     tint = Color.White
@@ -133,11 +130,13 @@ fun LogView(
                             DismissDirection.EndToStart,
                             DismissDirection.StartToEnd
                         ),
-                        dismissThresholds = { FractionalThreshold(0.25F) },
+                        dismissThresholds = { FractionalThreshold(0.50F) },
                         dismissContent = {
                             VideoGameItem(game = game) {
                                 val id = game.id
-                                navController.navigate(Screen.AddScreen.route + "/$id")
+                                navController.currentBackStackEntry?.savedStateHandle?.set("game", game)
+                                navController.currentBackStackEntry?.savedStateHandle?.set("showSaveButton", false)
+                                navController.navigate(Screen.SearchDetailScreen.route + "/$id")
                             }
                         })
                 }
@@ -151,12 +150,11 @@ fun VideoGameItem(game: Game, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             .clickable {
                 onClick()
             },
         elevation = 10.dp,
-        backgroundColor = Color.White
+        backgroundColor = Color.White,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -182,4 +180,5 @@ fun VideoGameItem(game: Game, onClick: () -> Unit) {
 
         }
     }
+
 }

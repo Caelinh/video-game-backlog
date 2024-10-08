@@ -1,12 +1,15 @@
 package com.wguproject.videogamebacklog.data
 
+import android.os.Parcelable
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.wguproject.videogamebacklog.utils.ListIntConverter
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "game-table")
 @TypeConverters(ListIntConverter::class)
 data class Game(
@@ -30,4 +33,4 @@ data class Game(
     val summary: String? = null,
     @ColumnInfo(name = "completed")
     val completed: Boolean = false
-)
+) : Parcelable

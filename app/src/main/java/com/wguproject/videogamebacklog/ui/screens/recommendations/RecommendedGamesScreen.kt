@@ -82,7 +82,9 @@ fun RecommendedGamesScreen(navController: NavController,viewModel: RecommendedGa
                         items(state.games) { game ->
                             GameListItem(
                                 game,
-                                onClick = { navController.navigate(Screen.SearchDetailScreen.route + "/${game.id}") })
+                                onClick = {
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("game", game)
+                                    navController.navigate(Screen.SearchDetailScreen.route + "/${game.id}") })
                         }
                     }
                 }

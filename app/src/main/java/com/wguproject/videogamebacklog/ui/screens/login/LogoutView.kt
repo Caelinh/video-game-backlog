@@ -1,10 +1,13 @@
 package com.wguproject.videogamebacklog.ui.screens.login
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.amplifyframework.core.Amplify
@@ -17,11 +20,12 @@ fun LogoutView(
 ){
     Scaffold(bottomBar = { AppBarBottom(navController)}) {
         Authenticator(Modifier.padding(it)) {
-            Button(onClick = { Amplify.Auth.signOut{} }) {
-                Text(text = "Sign Out")
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                Button(onClick = { Amplify.Auth.signOut {} }) {
+                    Text(text = "Sign Out")
 
+                }
             }
         }
-
     }
 }
