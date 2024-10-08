@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,14 +57,15 @@ fun SearchDetailScreen(
     navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val game = navController.previousBackStackEntry?.savedStateHandle?.get<Game>("game")
+    val showSaveButton = navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>("showSaveButton") ?: true
 
-    LaunchedEffect(id){
-        if (id != 0){
-            viewModel.loadGameDetails(id)
-        }
+    LaunchedEffect(game) {
+        viewModel.loadGameDetails(game)
+
     }
     Scaffold(
-        bottomBar = {AppBarBottom(navController) }
+        bottomBar = { AppBarBottom(navController) }
     ) {
 
         Column(
@@ -76,8 +78,6 @@ fun SearchDetailScreen(
 
             ) {
             uiState.selectedGame?.let { game ->
-
-
                 Image(
                     painter = rememberAsyncImagePainter(game.coverUrl),
                     contentDescription = "Cover art for a video game.",
@@ -86,50 +86,61 @@ fun SearchDetailScreen(
                         .padding(8.dp)
                         .size(240.dp)
                 )
-                Text(
-                    text = game.name,
-                    color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 18.sp),
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "Summary: ${game.summary}",
-                    color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.Normal),
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier
-                        .fillMaxHeight(.5f)
-                        .padding(8.dp)
-                        .verticalScroll(rememberScrollState())
-                )
-                Text(
-                    text = "Release Date: ${viewModel.convertUnixTimestamp(game.first_release_date?:0L)}",
-                    color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold),
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "Rating: ${game.aggregated_rating?.roundToInt()}",
-                    color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold),
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Button(
-                    onClick = {
-                        viewModel.viewModelScope.launch {
-                            val result = viewModel.addGame(game)
-                            Log.i("Saving the game", game.toString())
-                            if (result.isSuccess){
-                                viewModel.clearSearchResults()
-                                navController.navigate(Screen.HomeScreen.route)
-                            }
-                        }
+                Column(modifier = Modifier.padding(16.dp)) {
 
-                    }) {
-                    Text(text = "Save", color = Color.White)
+                    Text(
+                        text = game.name,
+                        color = Color.Black,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = game.summary ?: "No summary available",
+                        color = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Justify,
+                        modifier = Modifier
+                            .fillMaxHeight(.5f)
+                            .padding(8.dp)
+                            .verticalScroll(rememberScrollState())
+                    )
+                    Text(
+                        text = "Release Date: ${viewModel.convertUnixTimestamp(game.first_release_date ?: 0L)}",
+                        color = Color.Black,
+                        style = TextStyle(fontWeight = FontWeight.ExtraBold),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Rating: ${game.aggregated_rating?.roundToInt()}",
+                        color = Color.Black,
+                        style = TextStyle(fontWeight = FontWeight.ExtraBold),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                if (showSaveButton) {
+                    Button(
+                        onClick = {
+                            viewModel.viewModelScope.launch {
+                                val result = viewModel.addGame(game)
+                                Log.i("Saving the game", game.toString())
+                                if (result.isSuccess) {
+                                    navController.navigate(Screen.HomeScreen.route) {
+                                        popUpTo(Screen.SearchDetailScreen.route) {
+                                            inclusive = true
+                                        }
+                                    }
+
+                                }
+                            }
+
+                        }) {
+                        Text(text = "Save", color = Color.White)
+                    }
                 }
             }
         }

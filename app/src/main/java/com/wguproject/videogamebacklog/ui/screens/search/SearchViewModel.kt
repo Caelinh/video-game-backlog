@@ -45,12 +45,9 @@ class SearchViewModel(
     fun onSearchTitleChanged(newString: String) {
         _uiState.value = _uiState.value.copy(searchTitle = newString)
     }
-    fun loadGameDetails(id: Int){
-        viewModelScope.launch {
-            val game = findGameById(id)
+    fun loadGameDetails(game: Game?){
             _uiState.update { currentState ->
                 currentState.copy(selectedGame = game)
-            }
         }
     }
     fun clearSearchResults(){

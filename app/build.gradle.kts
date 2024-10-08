@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -12,7 +13,7 @@ android {
 
         buildConfigField(
             "String",
-            "TEST_API_KEY",
+            "API_KEY",
             "\"${project.findProperty("API_KEY")}\""
         )
 
