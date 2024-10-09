@@ -1,5 +1,6 @@
 package com.wguproject.videogamebacklog.ui.screens.CompletedLog
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +48,9 @@ fun CompletedLogScreen(navController: NavController, viewModel: CompletedLogView
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
+                    .padding(it),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(gameList.value, key = { game -> game.id }) { game ->
                     VideoGameItem(game = game, onClick = {})

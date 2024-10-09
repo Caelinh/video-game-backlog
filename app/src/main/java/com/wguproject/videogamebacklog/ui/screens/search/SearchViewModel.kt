@@ -8,6 +8,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import aws.smithy.kotlin.runtime.http.auth.AnonymousIdentity.attributes
+import com.amplifyframework.api.graphql.model.ModelMutation
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
+import com.amplifyframework.auth.result.AuthSessionResult
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.model.temporal.Temporal
+import com.amplifyframework.datastore.generated.model.User
 import com.wguproject.videogamebacklog.Graph
 import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.data.GameRepository
@@ -16,6 +24,7 @@ import com.wguproject.videogamebacklog.utils.ImageType
 import com.wguproject.videogamebacklog.utils.imageBuilder
 import com.wguproject.videogamebacklog.vgbService
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,20 +51,46 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    private val _currentUserId = mutableStateOf("")
+    val currentUserId: State<String> = _currentUserId
+
+    private val _currentUser = mutableStateOf<User?>(null)
+    val currentUser: State<User?> = _currentUser
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                Amplify.Auth.getCurrentUser(
+                    {
+                        Log.i("Get User Initialization", it.userId)
+                        _currentUserId.value = it.userId
+
+                        Log.i("Getting User from aws ", _currentUserId.value)
+                        loadUser(currentUserId.value)
+                    },
+                    {Log.e("Get Current User","Unable to fetch current user",it.cause)}
+                )
+
+
+            } catch (e: Exception) {
+                // Handle the case where there's no authenticated user
+                _currentUserId.value = ""
+            }
+        }
+    }
+    fun loadUser(userId: String) {
+        viewModelScope.launch {
+            _currentUser.value =
+                gameRepository.findAWSUser(userId) ?: gameRepository.createAWSDBUser(userId)
+        }
+    }
+
     fun onSearchTitleChanged(newString: String) {
         _uiState.value = _uiState.value.copy(searchTitle = newString)
     }
     fun loadGameDetails(game: Game?){
             _uiState.update { currentState ->
                 currentState.copy(selectedGame = game)
-        }
-    }
-    fun clearSearchResults(){
-        _uiState.update {currentState ->
-            currentState.copy(
-                list = emptyList(),
-                selectedGame = null
-            )
         }
     }
     fun clearSearch(){
@@ -93,8 +128,9 @@ class SearchViewModel(
                 val query = buildQuery(title)
                 val requestBody = query.toRequestBody("text/plain".toMediaType())
                 val response = vgbService.getGames(requestBody)
+                val filteredResponse = response.filter { it.aggregated_rating != null }
                 _uiState.value = _uiState.value.copy(
-                    list = response,
+                    list = filteredResponse,
                     error = null
                 )
                 fetchCoverArtForGames()
@@ -114,7 +150,27 @@ class SearchViewModel(
     fun addGame(game: Game): Result<Unit> {
         return try {
             viewModelScope.launch {
+                val newGame = com.amplifyframework.datastore.generated.model.Game.builder()
+                    .aggregatedRating(game.aggregated_rating)
+                    .name(game.name)
+                    .similarGames(game.similar_games)
+                    .category(game.category)
+                    .complete(game.completed)
+                    .coverUrl(game.coverUrl)
+                    .summary(game.summary)
+                    .firstReleaseDate(Temporal.Date(Date(game.first_release_date?:0L)))
+                    .user(currentUser.value)
+                    .id(game.id.toString())
+                    .build()
+
+                //TODO: Update aws game object and make sure it can be saved to the db
+                Amplify.API.mutate(
+                    ModelMutation.create(newGame),
+                    { Log.i("MyAmplifyApp", "Added Game with id: ${it.data.id}")},
+                    { Log.e("MyAmplifyApp", "Create failed", it)},
+                )
                 gameRepository.addGame(game = game)
+
             }
             Result.success(Unit)
         } catch (e: Exception) {

@@ -44,14 +44,17 @@ import androidx.navigation.NavController
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.wguproject.videogamebacklog.ui.screens.AppBarView
 import com.wguproject.videogamebacklog.GameViewModel
+import com.wguproject.videogamebacklog.R
 import com.wguproject.videogamebacklog.Screen
 import kotlin.math.roundToInt
 
@@ -85,7 +88,9 @@ fun LogView(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
+                    .padding(it),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(gameList.value, key = { game -> game.id }) { game ->
                     val dismissState = rememberDismissState(
@@ -149,7 +154,7 @@ fun LogView(
 fun VideoGameItem(game: Game, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(.95F)
             .clickable {
                 onClick()
             },
@@ -166,15 +171,19 @@ fun VideoGameItem(game: Game, onClick: () -> Unit) {
                 modifier = Modifier
                     .size(80.dp)
                     .padding(end = 16.dp)
+
             )
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = game.name, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
                 game.aggregated_rating?.let { rating ->
-                    Text(
-                        text = "Rating: ${rating.roundToInt()}",
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Gray
-                    )
+                    Row {
+                        Text(
+                            text = "${rating.roundToInt()/10}/10",
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                        Icon(Icons.Filled.Star,null, tint = colorResource(id = R.color.star_yellow))
+                    }
                 }
             }
 

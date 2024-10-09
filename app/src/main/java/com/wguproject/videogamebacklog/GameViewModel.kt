@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.graphql.model.ModelMutation
 import com.amplifyframework.api.graphql.model.ModelQuery
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
+import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.datastore.generated.model.BackLog
 import com.wguproject.videogamebacklog.data.Game
@@ -37,6 +39,7 @@ class GameViewModel(
     init {
         viewModelScope.launch() {
           getAllBackLogGames = gameRepository.getAllBacklogGames()
+
 
         }
     }
