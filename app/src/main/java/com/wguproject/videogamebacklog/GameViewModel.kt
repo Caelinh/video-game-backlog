@@ -1,6 +1,7 @@
 package com.wguproject.videogamebacklog
 
 import android.util.Log
+import androidx.collection.emptyIntList
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,15 +24,23 @@ class GameViewModel(
     private val gameRepository: GameRepository = Graph.gameRepository
 ) : ViewModel() {
 
+    var selectedGame by mutableStateOf(Game(id = 0, category = 0, aggregated_rating = 0.0, first_release_date = 0L, genres = emptyList(), name = ""))
+
     var gameTitleState by mutableStateOf("")
     var gameDescriptionState by mutableStateOf("")
 
     fun onGameTitleChanged(newString: String) {
         gameTitleState = newString
+        selectedGame = selectedGame.copy(
+            name = gameTitleState
+        )
     }
 
     fun onGameDescriptionChanged(newString: String) {
         gameDescriptionState = newString
+        selectedGame = selectedGame.copy(
+            summary = gameDescriptionState
+        )
     }
 
     lateinit var getAllBackLogGames: Flow<List<Game>>

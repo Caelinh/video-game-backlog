@@ -65,7 +65,12 @@ fun SearchDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val game = navController.previousBackStackEntry?.savedStateHandle?.get<Game>("game")
-    val showSaveButton = navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>("showSaveButton") ?: true
+    val showSaveButton =
+        navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>("showSaveButton")
+            ?: true
+    val showEditButton =
+        navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>("showEditButton")
+            ?: false
 
     LaunchedEffect(game) {
         viewModel.loadGameDetails(game)
@@ -86,18 +91,20 @@ fun SearchDetailScreen(
             ) {
             uiState.selectedGame?.let { game ->
 
-                    Image(
-                        painter = rememberAsyncImagePainter(game.coverUrl),
-                        contentDescription = "Cover art for a video game.",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(220.dp,300.dp)
-                            .shadow(elevation = 8.dp,
+                Image(
+                    painter = rememberAsyncImagePainter(game.coverUrl),
+                    contentDescription = "Cover art for a video game.",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(220.dp, 300.dp)
+                        .shadow(
+                            elevation = 8.dp,
                             shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
-                            spotColor = Color.Black.copy(alpha = 0.50f))
+                            spotColor = Color.Black.copy(alpha = 0.50f)
+                        )
 
-                    )
+                )
 
                 Column(modifier = Modifier.padding(16.dp)) {
 
@@ -128,16 +135,22 @@ fun SearchDetailScreen(
                         textAlign = TextAlign.Center
                     )
                     game.aggregated_rating?.let { rating ->
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp), horizontalArrangement = Arrangement.Center) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp), horizontalArrangement = Arrangement.Center
+                        ) {
                             Text(
-                                text = "${rating.roundToInt()/10}/10",
+                                text = "${rating.roundToInt() / 10}/10",
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center
                             )
-                            Icon(Icons.Filled.Star,null, tint = colorResource(id = R.color.star_yellow))
+                            Icon(
+                                Icons.Filled.Star,
+                                null,
+                                tint = colorResource(id = R.color.star_yellow)
+                            )
                         }
 
                     }
@@ -163,7 +176,17 @@ fun SearchDetailScreen(
                         Text(text = "Save", color = Color.White)
                     }
                 }
+                if (showEditButton) {
+                    Button(
+                        onClick = {
+                            navController.navigate(Screen.AddScreen.route + "/${game.id}")
+                        }
+                    ) {
+                        Text(text = "Edit", color = Color.White)
+                    }
+                }
             }
         }
     }
 }
+

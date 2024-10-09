@@ -52,11 +52,9 @@ fun AddEditDetailView(
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     if (id != 0) {
-        val game = viewModel.getGameById(id).collectAsState(initial = Game(0, 0.0, 0,"",0L,
-            emptyList(),"", emptyList(),"")
-        )
-        viewModel.gameTitleState = game.value.name
-        viewModel.gameDescriptionState = game.value.summary?:"None"
+        val game = navController.previousBackStackEntry?.savedStateHandle?.get<Game>("game")
+        viewModel.gameTitleState = viewModel.selectedGame.name
+        viewModel.gameDescriptionState = viewModel.selectedGame.summary.toString()
     } else {
         viewModel.gameTitleState = ""
         viewModel.gameDescriptionState = ""
@@ -64,12 +62,9 @@ fun AddEditDetailView(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = {
-            AppBarView(
-                title = if (id != 0) stringResource(id = R.string.update_game)
-                else stringResource(id = R.string.add_game)
-            ) { navController.navigateUp() }
-        },
+        bottomBar = {
+            AppBarBottom(navController = navController)
+        }
     ) {
         Column(
             modifier = Modifier
@@ -81,9 +76,9 @@ fun AddEditDetailView(
             Spacer(Modifier.height(10.dp))
             GameTextField(label = "Title", value = viewModel.gameTitleState, onValueChanged = {
                 viewModel.onGameTitleChanged(it)
-            })
+            },)
             Spacer(Modifier.height(10.dp))
-            GameTextField(label = "Description",
+            GameTextField(label = "Summary",
                 value = viewModel.gameDescriptionState,
                 onValueChanged = {
                     viewModel.onGameDescriptionChanged(it)
@@ -92,27 +87,17 @@ fun AddEditDetailView(
             Button(onClick = {
                 if (viewModel.gameTitleState.isNotEmpty() && viewModel.gameDescriptionState.isNotEmpty()) {
                     if (id != 0) {
+                        viewModel.updateGame(viewModel.selectedGame)
                         snackMessage.value = "Game Updated"
                     } else {
-//                        val newGame = com.amplifyframework.datastore.generated.model.Game.builder()
-//                            .name(viewModel.gameTitleState.trim())
-//                            .description(viewModel.gameDescriptionState.trim())
-//                            .build()
-//                        Amplify.API.mutate(
-//                            ModelMutation.create(newGame),
-//                            { Log.i("My Amplify Backend", "Added Todo with id: ${it.data.id}") },
-//                            { Log.e("MyAmplify Backend", "Create failed", it) }
-//
-//                        )
-                        snackMessage.value = "Game saved"
                     }
                 } else {
                     navController.navigate(Screen.SearchScreen.route)
-                    snackMessage.value = "Enter fields to create a wish"
+                    snackMessage.value = "Enter fields to create a Game"
                 }
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(snackMessage.value)
-                    navController.navigateUp()
+                    navController.navigate(Screen.HomeScreen.route)
                 }
             }) {
                 Text(
@@ -139,7 +124,7 @@ fun GameTextField(
         value = value,
         onValueChange = onValueChanged,
         label = { Text(text = label, color = Color.Black) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(12.dp),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Color.Black,
