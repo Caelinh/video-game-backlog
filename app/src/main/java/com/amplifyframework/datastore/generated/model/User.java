@@ -1,8 +1,7 @@
 package com.amplifyframework.datastore.generated.model;
 
-import com.amplifyframework.core.model.annotations.HasOne;
-import com.amplifyframework.core.model.ModelReference;
-import com.amplifyframework.core.model.LoadedModelReferenceImpl;
+import com.amplifyframework.core.model.annotations.HasMany;
+import com.amplifyframework.core.model.ModelList;
 import com.amplifyframework.core.model.temporal.Temporal;
 import com.amplifyframework.core.model.ModelIdentifier;
 
@@ -33,8 +32,7 @@ public final class User implements Model {
   public static final UserPath rootPath = new UserPath("root", false, null);
   public static final QueryField USER_ID = field("User", "userId");
   private final @ModelField(targetType="ID", isRequired = true) String userId;
-  private final @ModelField(targetType="BackLog") @HasOne(associatedWith = "user", type = BackLog.class) ModelReference<BackLog> backlog = null;
-  private final @ModelField(targetType="CompletedLog") @HasOne(associatedWith = "user", type = CompletedLog.class) ModelReference<CompletedLog> completedlog = null;
+  private final @ModelField(targetType="Game") @HasMany(associatedWith = "user", type = Game.class) ModelList<Game> games = null;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
   /** @deprecated This API is internal to Amplify and should not be used. */
@@ -47,12 +45,8 @@ public final class User implements Model {
       return userId;
   }
   
-  public ModelReference<BackLog> getBacklog() {
-      return backlog;
-  }
-  
-  public ModelReference<CompletedLog> getCompletedlog() {
-      return completedlog;
+  public ModelList<Game> getGames() {
+      return games;
   }
   
   public Temporal.DateTime getCreatedAt() {

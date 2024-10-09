@@ -1,11 +1,13 @@
 package com.wguproject.videogamebacklog.ui.screens.recommendations
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -68,8 +70,9 @@ fun RecommendedGamesScreen(navController: NavController,viewModel: RecommendedGa
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        CircularProgressIndicator(Modifier.size(200.dp))
+                        CircularProgressIndicator(Modifier.size(160.dp))
                     }
 
                 }
@@ -77,7 +80,8 @@ fun RecommendedGamesScreen(navController: NavController,viewModel: RecommendedGa
                 is RandomGamesUiState.Success -> {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
-                        contentPadding = PaddingValues(4.dp)
+                        contentPadding = PaddingValues(4.dp),
+                        modifier = Modifier.fillMaxHeight()
                     ) {
                         items(state.games) { game ->
                             GameListItem(
@@ -108,6 +112,7 @@ fun GameListItem(game: Game, onClick: () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             AsyncImage(
                 model = game.coverUrl,
                 contentDescription = "Game cover",

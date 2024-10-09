@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +23,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -170,6 +173,7 @@ fun GameItem(game: Game,date:String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .wrapContentSize()
             .padding(top = 4.dp, start = 4.dp, end = 4.dp)
             .height(100.dp)
             .clickable { onClick() },
@@ -179,6 +183,7 @@ fun GameItem(game: Game,date:String, onClick: () -> Unit) {
         Row(
             Modifier
                 .padding(16.dp)
+                .fillMaxWidth()
         ) {
             Image(
                 painter = rememberAsyncImagePainter(game.coverUrl),
@@ -190,25 +195,31 @@ fun GameItem(game: Game,date:String, onClick: () -> Unit) {
             Column(
                 Modifier
                     .padding(4.dp)
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = game.name,
                     color = Color.Black,
-                    style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
+                    style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 18.sp),
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Text(
                     text = "Release Date: $date",
                     color = Color.Black,
                     style = TextStyle(fontWeight = FontWeight.Medium)
                 )
+                game.aggregated_rating?.let { rating ->
+                    Row {
+                        Text(
+                            text = "${rating.roundToInt()/10}/10",
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                        Icon(Icons.Filled.Star,null, tint = colorResource(id = R.color.star_yellow))
+                    }
 
-            }
-            game.aggregated_rating?.let { rating ->
-                Text(
-                    text = "Rating: ${rating.roundToInt()}",
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
+                }
+
             }
 
         }

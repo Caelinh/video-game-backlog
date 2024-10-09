@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,9 +20,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,8 +35,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.wguproject.videogamebacklog.R
 import com.wguproject.videogamebacklog.Screen
 import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.ui.screens.AppBarBottom
@@ -78,14 +85,20 @@ fun SearchDetailScreen(
 
             ) {
             uiState.selectedGame?.let { game ->
-                Image(
-                    painter = rememberAsyncImagePainter(game.coverUrl),
-                    contentDescription = "Cover art for a video game.",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(240.dp)
-                )
+
+                    Image(
+                        painter = rememberAsyncImagePainter(game.coverUrl),
+                        contentDescription = "Cover art for a video game.",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(220.dp,300.dp)
+                            .shadow(elevation = 8.dp,
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+                            spotColor = Color.Black.copy(alpha = 0.50f))
+
+                    )
+
                 Column(modifier = Modifier.padding(16.dp)) {
 
                     Text(
@@ -114,13 +127,21 @@ fun SearchDetailScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                    Text(
-                        text = "Rating: ${game.aggregated_rating?.roundToInt()}",
-                        color = Color.Black,
-                        style = TextStyle(fontWeight = FontWeight.ExtraBold),
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+                    game.aggregated_rating?.let { rating ->
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp), horizontalArrangement = Arrangement.Center) {
+                            Text(
+                                text = "${rating.roundToInt()/10}/10",
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center
+                            )
+                            Icon(Icons.Filled.Star,null, tint = colorResource(id = R.color.star_yellow))
+                        }
+
+                    }
+
                 }
                 if (showSaveButton) {
                     Button(
