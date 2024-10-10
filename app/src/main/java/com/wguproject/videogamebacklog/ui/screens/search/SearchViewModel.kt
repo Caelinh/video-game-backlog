@@ -153,6 +153,7 @@ class SearchViewModel(
                 val newGame = com.amplifyframework.datastore.generated.model.Game.builder()
                     .aggregatedRating(game.aggregated_rating)
                     .name(game.name)
+                    .genres(game.genres)
                     .similarGames(game.similar_games)
                     .category(game.category)
                     .complete(game.completed)
@@ -163,7 +164,6 @@ class SearchViewModel(
                     .id(game.id.toString())
                     .build()
 
-                //TODO: Update aws game object and make sure it can be saved to the db
                 Amplify.API.mutate(
                     ModelMutation.create(newGame),
                     { Log.i("MyAmplifyApp", "Added Game with id: ${it.data.id}")},

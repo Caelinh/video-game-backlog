@@ -139,8 +139,10 @@ fun LogView(
                         dismissContent = {
                             VideoGameItem(game = game) {
                                 val id = game.id
+                                viewModel.selectedGame = game
                                 navController.currentBackStackEntry?.savedStateHandle?.set("game", game)
                                 navController.currentBackStackEntry?.savedStateHandle?.set("showSaveButton", false)
+                                navController.currentBackStackEntry?.savedStateHandle?.set("showEditButton", true)
                                 navController.navigate(Screen.SearchDetailScreen.route + "/$id")
                             }
                         })
