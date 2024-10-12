@@ -35,9 +35,7 @@ class RecommendedGamesViewModel(private val gameRepository: GameRepository = Gra
     private val _uiState = MutableStateFlow<RandomGamesUiState>(RandomGamesUiState.Loading)
     val uiState: StateFlow<RandomGamesUiState> = _uiState.asStateFlow()
 
-    lateinit var getAllBackLogGames: Flow<List<Game>>
     var query: String = ""
-    private val viewModelJob = SupervisorJob()
 
     init {
         viewModelScope.launch {

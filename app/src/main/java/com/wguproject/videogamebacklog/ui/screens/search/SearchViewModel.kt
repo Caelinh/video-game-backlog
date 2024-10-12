@@ -1,24 +1,18 @@
 package com.wguproject.videogamebacklog.ui.screens.search
 
 import android.util.Log
-import androidx.collection.emptyIntList
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import aws.smithy.kotlin.runtime.http.auth.AnonymousIdentity.attributes
 import com.amplifyframework.api.graphql.model.ModelMutation
-import com.amplifyframework.auth.AuthException
-import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
-import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.temporal.Temporal
 import com.amplifyframework.datastore.generated.model.User
 import com.wguproject.videogamebacklog.Graph
 import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.data.GameRepository
+import com.wguproject.videogamebacklog.utils.GameSearchable
 import com.wguproject.videogamebacklog.utils.ImageSize
 import com.wguproject.videogamebacklog.utils.ImageType
 import com.wguproject.videogamebacklog.utils.imageBuilder
@@ -36,17 +30,13 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 
 
 class SearchViewModel(
     private val gameRepository: GameRepository = Graph.gameRepository
-) : ViewModel() {
+) : ViewModel(),GameSearchable {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
@@ -98,6 +88,11 @@ class SearchViewModel(
         searchTitle = ""
         )
     }
+
+    override fun performSearch(query: String) {
+        searchForGame(query)
+    }
+
 
     private val viewModelJob = SupervisorJob()
     private val errorHandler = CoroutineExceptionHandler { _, exception ->

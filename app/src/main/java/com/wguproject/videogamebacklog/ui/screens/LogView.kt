@@ -45,6 +45,7 @@ import androidx.compose.material.DismissDirection
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
@@ -79,10 +80,11 @@ fun LogView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "BackLog",
+                    text = "Video Game BackLog",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = Color.Black
                 )
             }
             LazyColumn(

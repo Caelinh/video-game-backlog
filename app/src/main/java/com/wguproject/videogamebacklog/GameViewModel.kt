@@ -1,5 +1,7 @@
 package com.wguproject.videogamebacklog
 
+import android.content.Context
+import android.os.Environment
 import android.util.Log
 import androidx.collection.emptyIntList
 import androidx.compose.runtime.State
@@ -21,8 +23,19 @@ import com.wguproject.videogamebacklog.data.Game
 import com.wguproject.videogamebacklog.data.GameRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class GameViewModel(
     private val gameRepository: GameRepository = Graph.gameRepository
@@ -33,9 +46,10 @@ class GameViewModel(
     var gameDescriptionState by mutableStateOf("")
     private val _currentUserId = mutableStateOf("")
     val currentUserId: State<String> = _currentUserId
-
     private val _currentUser = mutableStateOf<User?>(null)
     val currentUser: State<User?> = _currentUser
+    private val _reportState = MutableStateFlow<String?>(null)
+    val reportState: StateFlow<String?> = _reportState.asStateFlow()
 
     fun onGameTitleChanged(newString: String) {
         gameTitleState = newString
@@ -62,7 +76,7 @@ class GameViewModel(
     init {
         viewModelScope.launch() {
           getAllBackLogGames = gameRepository.getAllBacklogGames()
-            try {
+            try{
                 Amplify.Auth.getCurrentUser(
                     {
                         Log.i("Get User Initialization", it.userId)
@@ -73,27 +87,11 @@ class GameViewModel(
                     },
                     {Log.e("Get Current User","Unable to fetch current user",it.cause)}
                 )
-
-
             } catch (e: Exception) {
-                // Handle the case where there's no authenticated user
                 _currentUserId.value = ""
             }
-
-
         }
     }
-
-    fun addGame(game: Game) {
-        viewModelScope.launch(Dispatchers.IO) {
-            gameRepository.addGame(game = game)
-        }
-
-    }
-    fun getGameById(id: Int): Flow<Game> {
-        return gameRepository.getGameById(id)
-    }
-
     fun updateGame(game: Game) {
         viewModelScope.launch(Dispatchers.IO) {
             gameRepository.updateGame(game = game)
@@ -118,11 +116,48 @@ class GameViewModel(
                 {Log.e("Updating Amplify Model","Unable to update amplify game.",it.cause)})
         }
     }
-
     fun deleteGame(game: Game) {
         viewModelScope.launch(Dispatchers.IO) {
             gameRepository.deleteGame(game = game)
         }
+    }
+
+    fun generateReport(context: Context) {
+        viewModelScope.launch {
+            try {
+                val games = gameRepository.getAllBacklogGames().first()
+                val report = buildString {
+                    append("Video Game Backlog Report\n")
+                    append("Generated on: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())}\n\n")
+                    append("ID,Title,Release Date,Rating,Status\n")
+                    games.forEach { game ->
+                        append("${game.id},")
+                        append("\"${game.name}\",")
+                        append("${formatDate(game.first_release_date)},")
+                        append("${formatRating(game.aggregated_rating)},")
+                        append("${if (game.completed) "Completed" else "In Progress"}\n")
+                    }
+                }
+
+                val fileName = "GameReport_${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())}.csv"
+                val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+                file.writeText(report)
+                _reportState.value = file.absolutePath
+            } catch (e: Exception) {
+                _reportState.value = "Error: ${e.message}"
+            }
+        }
+    }
+    private fun formatDate(timestamp: Long?): String {
+        return if (timestamp != null) {
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(timestamp * 1000))
+        } else {
+            "N/A"
+        }
+    }
+
+    private fun formatRating(rating: Double?): String {
+        return rating?.let { String.format("%.1f", it / 10) } ?: "N/A"
     }
 
 }

@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.api.aws.AWSApiPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
@@ -18,6 +22,7 @@ import com.amplifyframework.core.configuration.AmplifyOutputsData
 import com.amplifyframework.ui.authenticator.ui.Authenticator
 import com.wguproject.videogamebacklog.ui.navigation.Navigation
 import com.wguproject.videogamebacklog.ui.theme.VideoGameBacklogTheme
+import com.wguproject.videogamebacklog.utils.AppTitle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,13 +30,14 @@ class MainActivity : ComponentActivity() {
         configureAmplify()
         setContent {
             VideoGameBacklogTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Authenticator {
-                        Navigation()
+                    Box(modifier = Modifier.fillMaxSize().padding(top = 50.dp), contentAlignment = Alignment.TopCenter,) {
+                        Authenticator(headerContent = {AppTitle()}){
+                            Navigation()
+                        }
                     }
 
                 }

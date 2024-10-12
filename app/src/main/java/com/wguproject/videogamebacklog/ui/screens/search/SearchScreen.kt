@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -61,6 +62,7 @@ fun SearchScreen(
 ) {
     val viewState by viewModel.uiState.collectAsState()
     val hideKeyboard = rememberKeyboardController()
+    var isError by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -79,14 +81,26 @@ fun SearchScreen(
             SearchTextField(
                 label = "Game Title",
                 value = viewState.searchTitle,
-                onValueChanged = { viewModel.onSearchTitleChanged(it)
-                })
+                onValueChanged = {
+                    viewModel.onSearchTitleChanged(it)
+                    isError = false
+                },
+                isError = isError,
+                errorMessage = "Please enter a game title"
+                )
+
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
-                viewModel.searchForGame(viewState.searchTitle)
-                viewModel.clearSearch()
-                hideKeyboard()
-            }
+                if (viewState.searchTitle.isBlank()) {
+                    isError = true
+                } else {
+                    viewModel.performSearch(viewState.searchTitle.trim())
+                    viewModel.clearSearch()
+                    hideKeyboard()
+                }
+
+            },
+                enabled = !isError && viewState.searchTitle.isNotBlank()
                 ) {
                 Text(text = "Search")
             }
@@ -145,7 +159,7 @@ fun SearchScreen(
 
 @Composable
 fun SearchTextField(
-    label: String, value: String, onValueChanged: (String) -> Unit
+    label: String, value: String, onValueChanged: (String) -> Unit, isError: Boolean, errorMessage: String
 ) {
     var nameError by remember { mutableStateOf<String?>(null) }
     OutlinedTextField(
@@ -164,8 +178,12 @@ fun SearchTextField(
         ),
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Search,null)
-        }
+        },
+        isError = isError
     )
+    if (isError) {
+        Text(text = errorMessage, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(start = 16.dp, top = 4.dp))
+    }
 }
 
 @Composable

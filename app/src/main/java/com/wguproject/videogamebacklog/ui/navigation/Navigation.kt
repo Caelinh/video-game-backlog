@@ -92,7 +92,7 @@ fun Navigation(
             RecommendedGamesScreen(navController = navController, viewModel = recommendedGamesViewModel)
         }
         composable(route = Screen.SignOutScreen.route){
-            LogoutView(navController = navController)
+            LogoutView(navController = navController, gameViewModel = viewModel)
         }
 
     }
