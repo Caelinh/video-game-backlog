@@ -161,7 +161,7 @@ class SearchViewModel(
 
                 Amplify.API.mutate(
                     ModelMutation.create(newGame),
-                    { Log.i("MyAmplifyApp", "Added Game with id: ${it.data.id}")},
+                    { Log.i("MyAmplifyApp", "Added Game with id: ${it.data}")},
                     { Log.e("MyAmplifyApp", "Create failed", it)},
                 )
                 gameRepository.addGame(game = game)

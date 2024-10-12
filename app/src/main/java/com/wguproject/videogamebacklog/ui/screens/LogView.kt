@@ -42,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Star
@@ -112,23 +113,33 @@ fun LogView(
                     SwipeToDismiss(
                         state = dismissState,
                         background = {
+                            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+                            val alignment = when (direction){
+                                DismissDirection.StartToEnd -> Alignment.CenterStart
+                                DismissDirection.EndToStart -> Alignment.CenterEnd
+                            }
                             val color by animateColorAsState(
-                                if (dismissState.dismissDirection == DismissDirection.EndToStart) Color.Red
-                                else if (dismissState.dismissDirection == DismissDirection.StartToEnd) Color.Cyan
-                                else Color.Transparent, label = ""
+                                when(direction) {
+                                    DismissDirection.EndToStart -> colorResource(id = R.color.delete_game)
+                                    DismissDirection.StartToEnd -> colorResource(id = R.color.complete_game)
+                                },
+                                label = ""
                             )
-                            val alignment = Alignment.CenterEnd
+                            val icon = when (direction) {
+                                DismissDirection.StartToEnd -> Icons.Default.Check
+                                DismissDirection.EndToStart -> Icons.Default.Delete
+                            }
                             Box(
                                 Modifier
                                     .fillMaxSize()
                                     .background(color)
                                     .padding(horizontal = 20.dp),
-                                contentAlignment = Alignment.CenterEnd
+                                contentAlignment = alignment
 
                             ) {
                                 Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = "Delete Icon",
+                                    icon,
+                                    contentDescription = if (direction == DismissDirection.StartToEnd) "Update Icon" else "Delete Icon",
                                     tint = Color.White
                                 )
                             }

@@ -8,4 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="star_yellow">#AC9D14</color>
+    <color name="complete_game">#135182</color>
+    <color name="delete_game">#D00909</color>
 </resources>

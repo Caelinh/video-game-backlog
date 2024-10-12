@@ -34,8 +34,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Box(modifier = Modifier.fillMaxSize().padding(top = 50.dp), contentAlignment = Alignment.TopCenter,) {
-                        Authenticator(headerContent = {AppTitle()}){
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter,) {
+                        Authenticator(Modifier.padding(top = 50.dp),headerContent = {AppTitle()}){
                             Navigation()
                         }
                     }
