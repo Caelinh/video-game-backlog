@@ -140,7 +140,13 @@ class GameViewModel(
                 }
 
                 val fileName = "GameReport_${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())}.csv"
-                val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+                val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                val appDir = File(documentsDir, "MyGameBacklogApp")
+                if (!appDir.exists()) {
+                    appDir.mkdirs()
+                }
+
+                val file = File(appDir, fileName)
                 file.writeText(report)
                 _reportState.value = file.absolutePath
             } catch (e: Exception) {
