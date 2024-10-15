@@ -43,6 +43,7 @@ class RecommendedGamesViewModel(private val gameRepository: GameRepository = Gra
         }
 
     }
+
     private fun loadRandomRelatedGames() {
         viewModelScope.launch {
             try {

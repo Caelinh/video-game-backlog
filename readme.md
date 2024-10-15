@@ -2,17 +2,15 @@
 
 ## Overview
 
-The Video Game Backlog App is a modern Android application designed to help gamers manage their ever-growing collection of unplayed video games. Built with Jetpack Compose, this app offers a sleek, user-friendly interface to track, organize, and prioritize your gaming backlog.
+The Video Game Backlog App is a modern Android application designed to help gamers manage their ever-growing collection of unplayed video games. Built with Jetpack Compose, this app offers a sleek, user-friendly interface to track and prioritize your gaming backlog.
 
 ## Features
 
-- **Game Library**: Easily add games to your backlog with details like title, platform, and release date.
+- **Game Library**: Easily add games to your backlog with details like title, rating, and release date.
 - **Cover Art Display**: View beautiful cover art for each game in your list.
 - **Rating System**: See aggregated ratings for games to help you decide what to play next.
-- **Sorting and Filtering**: Organize your backlog by various criteria such as title, platform, or rating.
-- **Progress Tracking**: Mark games as unplayed, in progress, or completed.
-- **Search Functionality**: Quickly find games in your backlog with a powerful search feature.
-- **Cloud Sync**: Keep your backlog updated across devices.
+- **Progress Tracking**: Mark games as in progress, or completed.
+- **Search Functionality**: Quickly find games to add to your backlog with a powerful search feature.
 
 ## Technology Stack
 
@@ -23,19 +21,16 @@ The Video Game Backlog App is a modern Android application designed to help game
 - **Database**: Room Local, AWS Remote
 - **API Communication**: Retrofit
 
-## Setup
+## Setup to run the project locally
 
 1. Clone the repository:
    ```
-   git clone https://github.com/Caelinh/vgb.git
+   git clone https://gitlab.com/wgu-gitlab-environment/student-repos/Caelinh/d424-software-engineering-capstone.git
    ```
-2. Open the project in Android Studio.
+2. Open the project in Android Studio and be sure to switch to the working git branch. Version: Android Studio Hedgehog | 2023.1.1 Patch 2
 3. Sync the project with Gradle files.
 4. Run the app on an emulator or physical device.
-
-## Configuration
-
-(Coming Soon)
+5. API calls will not work locally since an private API key is required to access AWS Resources.
 
 ## Usage
 
@@ -48,6 +43,6 @@ The Video Game Backlog App is a modern Android application designed to help game
 
 ## Acknowledgments
 
-- Thanks to [IGDB](https://www.igdb.com/) for providing game data (if used).
+- Thanks to [IGDB](https://www.igdb.com/) for providing game data.
 - Icon assets by [Freepik](https://www.freepik.com/) from [Flaticon](https://www.flaticon.com/).
 

@@ -91,6 +91,7 @@ class GameViewModel(
                 _currentUserId.value = ""
             }
         }
+        _reportState.value = null
     }
     fun updateGame(game: Game) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -139,7 +140,7 @@ class GameViewModel(
                     }
                 }
 
-                val fileName = "GameReport_${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())}.csv"
+                val fileName = "GameReport_${System.currentTimeMillis()}.csv"
                 val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                 val appDir = File(documentsDir, "MyGameBacklogApp")
                 if (!appDir.exists()) {
