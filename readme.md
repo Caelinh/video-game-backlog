@@ -25,7 +25,7 @@ The Video Game Backlog App is a modern Android application designed to help game
 
 1. Clone the repository:
    ```
-   git clone https://gitlab.com/wgu-gitlab-environment/student-repos/Caelinh/d424-software-engineering-capstone.git
+   git clone https://github.com/Caelinh/video-game-backlog.git
    ```
 2. Open the project in Android Studio and be sure to switch to the working git branch. Version: Android Studio Hedgehog | 2023.1.1 Patch 2
 3. Sync the project with Gradle files.
